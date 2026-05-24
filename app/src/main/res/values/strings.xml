@@ -1,3 +1,34 @@
 <resources>
     <string name="app_name">MetroAtBKK</string>
+    <string name="stations_title">Stations</string>
+    <string name="stations_summary">%1$d stations across %2$d lines</string>
+    <string name="stations_loading">Loading stations</string>
+    <string name="stations_error_title">Could not load stations</string>
+    <string name="stations_error_fallback">Unable to load station list</string>
+    <string name="metro_greeting">Morning, %1$s!</string>
+    <string name="metro_subtitle">Have a Productive day!</string>
+    <string name="default_user_name">user</string>
+    <string name="search_content_description">Search routes and stations</string>
+    <string name="remove_selected_route">Remove selected route</string>
+    <string name="selected_route_station">%1$s (%2$s)</string>
+    <string name="nav_metro">Metro</string>
+    <string name="nav_srt">SRT</string>
+    <string name="nav_preferences">Preferences</string>
+    <string name="nav_metro_content_description">Metro tab</string>
+    <string name="nav_srt_content_description">SRT tab</string>
+    <string name="nav_preferences_content_description">Preferences tab</string>
+    <string name="srt_placeholder">SRT routes will appear here soon.</string>
+    <string name="preferences_placeholder">Preferences will appear here soon.</string>
+    <string name="line_name_sukhumvit">BTS Sukhumvit</string>
+    <string name="line_name_silom">BTS Silom</string>
+    <string name="line_name_gold">BTS Gold</string>
+    <string name="line_name_yellow">MRT Yellow</string>
+    <string name="line_name_pink">MRT Pink</string>
+    <string name="line_name_unknown">Line %1$d</string>
+    <string name="line_short_sukhumvit">SU</string>
+    <string name="line_short_silom">SI</string>
+    <string name="line_short_gold">G</string>
+    <string name="line_short_yellow">YL</string>
+    <string name="line_short_pink">PK</string>
+    <string name="line_short_unknown">L%1$d</string>
 </resources>

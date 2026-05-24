@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">MetroAtBKK</string>
+    <string name="stations_title">สถานี</string>
+    <string name="stations_summary">สถานีทั้งหมด %1$d แห่ง ใน %2$d สาย</string>
+    <string name="stations_loading">กำลังโหลดสถานี</string>
+    <string name="stations_error_title">โหลดสถานีไม่ได้</string>
+    <string name="stations_error_fallback">ไม่สามารถโหลดรายการสถานีได้</string>
+    <string name="metro_greeting">สวัสดีตอนเช้า, %1$s!</string>
+    <string name="metro_subtitle">ขอให้เป็นวันที่ productive!</string>
+    <string name="default_user_name">user</string>
+    <string name="search_content_description">ค้นหาเส้นทางและสถานี</string>
+    <string name="remove_selected_route">ลบเส้นทางที่เลือก</string>
+    <string name="selected_route_station">%1$s (%2$s)</string>
+    <string name="nav_metro">Metro</string>
+    <string name="nav_srt">SRT</string>
+    <string name="nav_preferences">Preferences</string>
+    <string name="nav_metro_content_description">แท็บ Metro</string>
+    <string name="nav_srt_content_description">แท็บ SRT</string>
+    <string name="nav_preferences_content_description">แท็บ Preferences</string>
+    <string name="srt_placeholder">เส้นทาง SRT จะมาเร็ว ๆ นี้</string>
+    <string name="preferences_placeholder">Preferences จะมาเร็ว ๆ นี้</string>
+    <string name="line_name_sukhumvit">บีทีเอส สายสุขุมวิท</string>
+    <string name="line_name_silom">บีทีเอส สายสีลม</string>
+    <string name="line_name_gold">บีทีเอส สายสีทอง</string>
+    <string name="line_name_yellow">เอ็มอาร์ที สายสีเหลือง</string>
+    <string name="line_name_pink">เอ็มอาร์ที สายสีชมพู</string>
+    <string name="line_name_unknown">สาย %1$d</string>
+    <string name="line_short_sukhumvit">SU</string>
+    <string name="line_short_silom">SI</string>
+    <string name="line_short_gold">G</string>
+    <string name="line_short_yellow">YL</string>
+    <string name="line_short_pink">PK</string>
+    <string name="line_short_unknown">L%1$d</string>
+</resources>
