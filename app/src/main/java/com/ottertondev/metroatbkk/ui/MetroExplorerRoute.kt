@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,8 +26,11 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -234,10 +237,12 @@ private fun MetroHomeContent(
     onStationRemoved: (SchematicStation) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val lastStationIndex = data.stations.lastIndex
+
     LazyColumn(
         modifier = modifier.background(MorningSurface),
         contentPadding = PaddingValues(start = 24.dp, top = 28.dp, end = 24.dp, bottom = 28.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
         item {
             MetroGreetingHeader()
@@ -245,6 +250,7 @@ private fun MetroHomeContent(
 
         if (selectedStations.isNotEmpty()) {
             item {
+                Spacer(modifier = Modifier.height(16.dp))
                 SelectedRoutesRow(
                     stations = selectedStations,
                     onRemove = onStationRemoved
@@ -253,15 +259,17 @@ private fun MetroHomeContent(
         }
 
         item {
-            Spacer(modifier = Modifier.height(2.dp))
+            Spacer(modifier = Modifier.height(18.dp))
         }
 
-        items(
+        itemsIndexed(
             items = data.stations,
-            key = { station -> station.selectionId }
-        ) { station ->
-            StationSelectionCard(
+            key = { _, station -> station.selectionId }
+        ) { index, station ->
+            StationSelectionSegment(
                 station = station,
+                shape = stationSegmentShape(index, lastStationIndex),
+                showDivider = index < lastStationIndex,
                 onClick = { onStationSelected(station) }
             )
         }
@@ -413,56 +421,85 @@ private fun SelectedRouteCard(
 }
 
 @Composable
-private fun StationSelectionCard(
+private fun StationSelectionSegment(
     station: SchematicStation,
+    shape: RoundedCornerShape,
+    showDivider: Boolean,
     onClick: () -> Unit
 ) {
+    val supportingName = station.localizedSupportingName()
+
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(4.dp, RoundedCornerShape(18.dp), clip = false)
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(18.dp),
+        modifier = Modifier.fillMaxWidth(),
+        shape = shape,
         color = SoftPurpleCard,
         tonalElevation = 1.dp
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            StationCodeBadge(station = station)
-            Column(
-                modifier = Modifier
-                    .padding(start = 14.dp)
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(3.dp)
-            ) {
-                Text(
-                    text = lineNameResource(station.lineId),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = station.localizedHeadlineName(),
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontFamily = GoogleSansFlexBodyMain,
-                        fontWeight = GoogleSansFlexWeight1000
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = station.localizedSupportingName(),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+        Column {
+            ListItem(
+                modifier = Modifier.clickable(onClick = onClick),
+                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                leadingContent = {
+                    StationCodeBadge(station = station)
+                },
+                overlineContent = {
+                    Text(
+                        text = lineNameResource(station.lineId),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
+                headlineContent = {
+                    Text(
+                        text = station.localizedHeadlineName(),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontFamily = GoogleSansFlexBodyMain,
+                            fontWeight = GoogleSansFlexWeight1000
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
+                supportingContent = {
+                    if (supportingName.isNotBlank()) {
+                        Text(
+                            text = supportingName,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            )
+            if (showDivider) {
+                HorizontalDivider(
+                    modifier = Modifier.padding(start = 80.dp),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.65f)
                 )
             }
         }
+    }
+}
+
+private fun stationSegmentShape(index: Int, lastIndex: Int): RoundedCornerShape {
+    val cornerSize = 18.dp
+
+    return when {
+        lastIndex <= 0 -> RoundedCornerShape(cornerSize)
+        index == 0 -> RoundedCornerShape(
+            topStart = cornerSize,
+            topEnd = cornerSize
+        )
+        index == lastIndex -> RoundedCornerShape(
+            bottomStart = cornerSize,
+            bottomEnd = cornerSize
+        )
+        else -> RoundedCornerShape(0.dp)
     }
 }
 
