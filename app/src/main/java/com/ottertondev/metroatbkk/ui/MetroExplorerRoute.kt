@@ -50,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -65,15 +66,6 @@ import com.ottertondev.metroatbkk.ui.theme.GoogleSansFlexBodyMain
 import com.ottertondev.metroatbkk.ui.theme.GoogleSansFlexHeader
 import com.ottertondev.metroatbkk.ui.theme.GoogleSansFlexWeight1000
 
-private val MorningSurface = Color(0xFFF8F1FF)
-private val SearchPurple = Color(0xFF7654C8)
-private val SearchPurplePressed = Color(0xFF6544B8)
-private val SoftPurpleCard = Color(0xFFEADCFF)
-private val SoftPurpleCardAlt = Color(0xFFF0E5FF)
-private val BtsSelectedCard = Color(0xFFD9F7CE)
-private val MrtSelectedCard = Color(0xFFDADFFF)
-private val RailInk = Color(0xFF21312C)
-
 @Composable
 fun MetroExplorerRoute() {
     val stationListState by rememberStationListState()
@@ -82,7 +74,7 @@ fun MetroExplorerRoute() {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        containerColor = MorningSurface,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             MetroNavigationBar(
                 selectedTab = selectedTab,
@@ -174,18 +166,18 @@ private fun MetroHomeStateContent(
 @Composable
 private fun LoadingMetroHome(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier.background(MorningSurface),
+        modifier = modifier.background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            CircularProgressIndicator(color = SearchPurple)
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             Text(
                 text = stringResource(R.string.stations_loading),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
     }
@@ -200,7 +192,7 @@ private fun ErrorMetroHome(
 
     Box(
         modifier = modifier
-            .background(MorningSurface)
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -240,7 +232,7 @@ private fun MetroHomeContent(
     val lastStationIndex = data.stations.lastIndex
 
     LazyColumn(
-        modifier = modifier.background(MorningSurface),
+        modifier = modifier.background(MaterialTheme.colorScheme.background),
         contentPadding = PaddingValues(start = 24.dp, top = 28.dp, end = 24.dp, bottom = 28.dp),
         verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
@@ -292,14 +284,14 @@ private fun MetroGreetingHeader() {
                     fontFamily = GoogleSansFlexHeader,
                     fontWeight = GoogleSansFlexWeight1000
                 ),
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onBackground,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = stringResource(R.string.metro_subtitle),
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color.Black
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -314,8 +306,8 @@ private fun StarSearchButton() {
             .size(58.dp)
             .shadow(8.dp, StarRoundedShape, clip = false),
         shape = StarRoundedShape,
-        color = SearchPurple,
-        contentColor = Color.White,
+        color = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
         onClick = {}
     ) {
         Box(contentAlignment = Alignment.Center) {
@@ -354,17 +346,20 @@ private fun SelectedRouteCard(
     onRemove: () -> Unit
 ) {
     val isMrt = station.isMrtLine
-    val cardColor = if (isMrt) MrtSelectedCard else BtsSelectedCard
-    val borderColor = if (isMrt) Color(0xFF8795D8) else Color(0xFF78C65D)
+    val colorScheme = MaterialTheme.colorScheme
+    val cardColor = if (isMrt) colorScheme.secondaryContainer else colorScheme.primaryContainer
+    val contentColor = if (isMrt) colorScheme.onSecondaryContainer else colorScheme.onPrimaryContainer
+    val borderColor = if (isMrt) colorScheme.secondary else colorScheme.primary
     val iconRes = if (isMrt) R.drawable.ic_mrt else R.drawable.ic_bts_lg
 
     Surface(
         modifier = Modifier.width(286.dp),
         shape = RoundedCornerShape(18.dp),
         color = cardColor,
+        contentColor = contentColor,
         tonalElevation = 1.dp,
         shadowElevation = 2.dp,
-        border = androidx.compose.foundation.BorderStroke(1.dp, borderColor)
+        border = androidx.compose.foundation.BorderStroke(1.dp, borderColor.copy(alpha = 0.42f))
     ) {
         Row(
             modifier = Modifier.padding(start = 12.dp, top = 10.dp, end = 6.dp, bottom = 10.dp),
@@ -386,7 +381,7 @@ private fun SelectedRouteCard(
                 Text(
                     text = lineNameResource(station.lineId),
                     style = MaterialTheme.typography.labelMedium,
-                    color = RailInk,
+                    color = contentColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -400,7 +395,7 @@ private fun SelectedRouteCard(
                         fontFamily = GoogleSansFlexBodyMain,
                         fontWeight = GoogleSansFlexWeight1000
                     ),
-                    color = RailInk,
+                    color = contentColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -412,7 +407,7 @@ private fun SelectedRouteCard(
                 Icon(
                     imageVector = Icons.Rounded.Close,
                     contentDescription = stringResource(R.string.remove_selected_route),
-                    tint = Color(0xFF123B5A),
+                    tint = contentColor,
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -432,7 +427,7 @@ private fun StationSelectionSegment(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = shape,
-        color = SoftPurpleCard,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
         tonalElevation = 1.dp
     ) {
         Column {
@@ -505,17 +500,20 @@ private fun stationSegmentShape(index: Int, lastIndex: Int): RoundedCornerShape 
 
 @Composable
 private fun StationCodeBadge(station: SchematicStation) {
+    val containerColor = lineColor(station.lineId)
+    val contentColor = contentColorForLine(containerColor)
+
     Surface(
         modifier = Modifier.size(48.dp),
         shape = CircleShape,
-        color = lineColor(station.lineId),
-        contentColor = Color.White
+        color = containerColor,
+        contentColor = contentColor
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
                 text = station.key.uppercase(),
                 style = MaterialTheme.typography.labelMedium,
-                color = Color.White,
+                color = contentColor,
                 fontWeight = FontWeight.Black,
                 maxLines = 1
             )
@@ -529,8 +527,8 @@ private fun MetroNavigationBar(
     onTabSelected: (MetroTab) -> Unit
 ) {
     NavigationBar(
-        containerColor = Color(0xFFF9F0FF),
-        tonalElevation = 0.dp
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        tonalElevation = 3.dp
     ) {
         MetroTab.entries.forEach { tab ->
             NavigationBarItem(
@@ -563,13 +561,13 @@ private fun PlaceholderScreen(
 ) {
     Box(
         modifier = modifier
-            .background(MorningSurface)
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
         Surface(
             shape = RoundedCornerShape(28.dp),
-            color = SoftPurpleCardAlt,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
             tonalElevation = 1.dp,
             shadowElevation = 3.dp
         ) {
@@ -627,6 +625,10 @@ private fun lineColor(lineId: Int): Color {
         5 -> Color(0xFFCD4692)
         else -> Color(0xFF1964B7)
     }
+}
+
+private fun contentColorForLine(color: Color): Color {
+    return if (color.luminance() > 0.45f) Color(0xFF111111) else Color.White
 }
 
 private val SchematicStation.selectionId: String
